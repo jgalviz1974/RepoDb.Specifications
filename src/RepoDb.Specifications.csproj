@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<LangVersion>13.0</LangVersion>
+	<Title>RepoDB.Specifications - Specification Pattern implementation for RepoDB.</Title>
+	<Authors>José David Galviz Muñoz</Authors>
+	<Company>Gasolutions SAS</Company>
+	<Description>Specification Pattern implementation for RepoDB with filtering, sorting, paging and projection support.</Description>
+	<Copyright>Gasolutions®</Copyright>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<RepositoryUrl>https://github.com/jgalviz1974/RepoDb.Specifications</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<AssemblyVersion>1.0.0.0</AssemblyVersion>
+	<Version>$(AssemblyVersion)</Version>
+	<FileVersion>$(AssemblyVersion)</FileVersion>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+	<PackageOutputPath Condition="'$(SolutionDir)' != ''">$(SolutionDir)nupkgs</PackageOutputPath>
+	<PackageOutputPath Condition="'$(SolutionDir)' == ''">$(MSBuildProjectDirectory)\nupkgs</PackageOutputPath>
+	<IsPackable>true</IsPackable>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageId>RepoDb.Specifications</PackageId>
+    <PackageTags>RepoDb;Specification;DDD;Repository</PackageTags>
+</PropertyGroup>
+
+	<!-- Leer CHANGELOG.md y poblar PackageReleaseNotes antes de empaquetar -->
+	<Target Name="ReadPackageReleaseNotes" BeforeTargets="GenerateNuspec;Pack">
+		<ReadLinesFromFile File="$(MSBuildProjectDirectory)\CHANGELOG.md">
+			<Output TaskParameter="Lines" ItemName="ReleaseNotesLines" />
+		</ReadLinesFromFile>
+
+		<PropertyGroup>
+			<!-- Unir las líneas leídas en una sola propiedad separada por saltos de línea (%0A) -->
+			<PackageReleaseNotes>@(ReleaseNotesLines->'%(Identity)', '%0A')</PackageReleaseNotes>
+		</PropertyGroup>
+	</Target>
+	<ItemGroup>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="readme.md">
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<Pack>True</Pack>
+		</None>
+	</ItemGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="RepoDb" Version="1.13.2-alpha1" />
+  </ItemGroup>
+
+</Project>
