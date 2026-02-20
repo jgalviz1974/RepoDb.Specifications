@@ -27,6 +27,7 @@
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageId>RepoDb.Specifications</PackageId>
     <PackageTags>RepoDb;Specification;DDD;Repository</PackageTags>
+	<NoWarn>NU5104</NoWarn>
 </PropertyGroup>
 
 	<!-- Leer CHANGELOG.md y poblar PackageReleaseNotes antes de empaquetar -->
