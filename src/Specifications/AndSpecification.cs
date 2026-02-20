@@ -85,11 +85,11 @@ public class AndSpecification<T> : RepoDbSpecification<T>
     /// In RepoDB, AND is the default conjunction when multiple QueryFields are combined in a single QueryGroup.
     /// This method extracts QueryFields from both left and right QueryGroups and combines them into a single QueryGroup,
     /// which RepoDB interprets as AND logic.
-    /// 
+    ///
     /// Example:
     /// - Left: QueryField(IsActive, true)
     /// - Right: QueryField(Total, >, 1000)
-    /// - Result: QueryGroup([QueryField(IsActive, true), QueryField(Total, >, 1000)]) → IsActive = true AND Total > 1000
+    /// - Result: QueryGroup([QueryField(IsActive, true), QueryField(Total, >, 1000)]) → IsActive = true AND Total > 1000.
     /// </remarks>
     /// <param name="left">The left QueryGroup. Can be null.</param>
     /// <param name="right">The right QueryGroup. Can be null.</param>
@@ -116,7 +116,7 @@ public class AndSpecification<T> : RepoDbSpecification<T>
 
         // Both are non-null: combine by extracting and merging QueryFields
         // RepoDB: Multiple QueryFields in one QueryGroup = AND logic (default)
-        var combinedFields = new List<QueryField>();
+        List<QueryField> combinedFields = new();
 
         // Extract fields from left QueryGroup
         if (left.QueryFields != null)

@@ -1,5 +1,5 @@
 using System.Data;
-using RepoDb;
+
 using Xunit;
 
 namespace RepoDb.Specifications.Tests;
@@ -9,6 +9,50 @@ namespace RepoDb.Specifications.Tests;
 /// </summary>
 public class CountAndExistsTests
 {
+    [Fact]
+    public void Count_ThrowsArgumentNullException_WhenConnectionIsNull()
+    {
+        // Arrange
+        IDbConnection? connection = null;
+        SimpleSpecification spec = new();
+
+        // Act & Assert
+        _ = Assert.Throws<ArgumentNullException>(() => connection!.Count(spec));
+    }
+
+    [Fact]
+    public void Count_ThrowsArgumentNullException_WhenSpecIsNull()
+    {
+        // Arrange
+        IDbConnection? connection = new MockDbConnection();
+        IRepoDbSpecification<TestEntity>? spec = null;
+
+        // Act & Assert
+        _ = Assert.Throws<ArgumentNullException>(() => connection.Count(spec!));
+    }
+
+    [Fact]
+    public void Exists_ThrowsArgumentNullException_WhenConnectionIsNull()
+    {
+        // Arrange
+        IDbConnection? connection = null;
+        SimpleSpecification spec = new();
+
+        // Act & Assert
+        _ = Assert.Throws<ArgumentNullException>(() => connection!.Exists(spec));
+    }
+
+    [Fact]
+    public void Exists_ThrowsArgumentNullException_WhenSpecIsNull()
+    {
+        // Arrange
+        IDbConnection? connection = new MockDbConnection();
+        IRepoDbSpecification<TestEntity>? spec = null;
+
+        // Act & Assert
+        _ = Assert.Throws<ArgumentNullException>(() => connection.Exists(spec!));
+    }
+
     private class TestEntity
     {
         public int Id { get; set; }
@@ -29,56 +73,12 @@ public class CountAndExistsTests
         }
     }
 
-    [Fact]
-    public void Count_ThrowsArgumentNullException_WhenConnectionIsNull()
-    {
-        // Arrange
-        IDbConnection? connection = null;
-        var spec = new SimpleSpecification();
-
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => connection!.Count(spec));
-    }
-
-    [Fact]
-    public void Count_ThrowsArgumentNullException_WhenSpecIsNull()
-    {
-        // Arrange
-        IDbConnection? connection = new MockDbConnection();
-        IRepoDbSpecification<TestEntity>? spec = null;
-
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => connection.Count(spec!));
-    }
-
-    [Fact]
-    public void Exists_ThrowsArgumentNullException_WhenConnectionIsNull()
-    {
-        // Arrange
-        IDbConnection? connection = null;
-        var spec = new SimpleSpecification();
-
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => connection!.Exists(spec));
-    }
-
-    [Fact]
-    public void Exists_ThrowsArgumentNullException_WhenSpecIsNull()
-    {
-        // Arrange
-        IDbConnection? connection = new MockDbConnection();
-        IRepoDbSpecification<TestEntity>? spec = null;
-
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => connection.Exists(spec!));
-    }
-
     /// <summary>
     /// Mock implementation of IDbConnection for testing.
     /// </summary>
     private class MockDbConnection : IDbConnection
     {
-        public string ConnectionString
+        public string? ConnectionString
         {
             get => throw new NotImplementedException();
             set => throw new NotImplementedException();
