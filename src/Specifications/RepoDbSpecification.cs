@@ -3,8 +3,9 @@
 /// <summary>
 /// Represents a base class for defining specifications that can be used to query entities from a data repository using RepoDB. This class provides methods for setting criteria, sorting, paging, and field selection, allowing for the construction of flexible and reusable query definitions. Derived classes can implement specific query logic by utilizing the provided methods to build up the specification according to their needs.
 /// </summary>
-/// <typeparam name="T">The type of the entity to which the specification applies.</typeparam>
+/// <typeparam name="T">The type of the entity to which the specification applies. Must be a reference type.</typeparam>
 public abstract class RepoDbSpecification<T> : IRepoDbSpecification<T>
+    where T : class
 {
     private readonly List<Sort> sorts = [];
     private readonly List<string> selectFields = [];
@@ -82,5 +83,41 @@ public abstract class RepoDbSpecification<T> : IRepoDbSpecification<T>
     {
         this.selectFields.Clear();
         this.selectFields.AddRange(fields);
+    }
+
+    /// <summary>
+    /// Combines this specification with another using a logical AND operation on their criteria.
+    /// </summary>
+    /// <remarks>
+    /// Creates a new <see cref="AndSpecification{T}"/> that merges the criteria of both specifications.
+    /// The criteria from both specifications are combined using AND logic.
+    /// If either specification has null criteria, the non-null one is used.
+    /// Sorts, SelectFields, and Skip/Take prefer this (left) specification; if not set, the right specification's values are used.
+    /// </remarks>
+    /// <param name="other">The specification to combine with this one using AND. Cannot be null.</param>
+    /// <returns>A new <see cref="AndSpecification{T}"/> representing the combined specifications.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if other is null.</exception>
+    public AndSpecification<T> And(IRepoDbSpecification<T> other)
+    {
+        if (other == null)
+        {
+            throw new ArgumentNullException(nameof(other));
+        }
+
+        return new AndSpecification<T>(this, other);
+    }
+
+    /// <summary>
+    /// Creates a new specification that negates the criteria of this specification using a logical NOT operation.
+    /// </summary>
+    /// <remarks>
+    /// Creates a new <see cref="NotSpecification{T}"/> that inverts the criteria of this specification.
+    /// If this specification has null criteria, the result is also null.
+    /// Sorts, SelectFields, and Skip/Take are copied as-is to the new specification.
+    /// </remarks>
+    /// <returns>A new <see cref="NotSpecification{T}"/> representing the negated specification.</returns>
+    public NotSpecification<T> Not()
+    {
+        return new NotSpecification<T>(this);
     }
 }

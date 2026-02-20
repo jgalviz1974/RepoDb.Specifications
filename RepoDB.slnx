@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="src/RepoDb.Specifications.csproj" />
+  <Project Path="tests/RepoDb.Specifications.Tests/RepoDb.Specifications.Tests.csproj" />
 </Solution>

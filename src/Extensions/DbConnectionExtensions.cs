@@ -1,5 +1,6 @@
-﻿using System.Data;
-using RepoDb.Enumerations;
+﻿using RepoDb.Enumerations;
+
+using System.Data;
 
 namespace RepoDb.Specifications;
 
@@ -53,5 +54,69 @@ public static class DbConnectionExtensions
             orderBy: orderBy,
             top: top,
             fields: fields);
+    }
+
+    /// <summary>
+    /// Counts the number of entities in the database that match the criteria defined in the specification.
+    /// </summary>
+    /// <remarks>
+    /// This method uses the criteria (WHERE clause) from the specification to count matching entities.
+    /// Sorting, field selection, and paging information from the specification are ignored for the count operation.
+    /// The connection is not closed by this method.
+    /// </remarks>
+    /// <typeparam name="TEntity">The type of the entity to count. Must be a reference type.</typeparam>
+    /// <param name="connection">The database connection to use for executing the count. Must be open and valid.</param>
+    /// <param name="spec">The specification that defines the filtering criteria for counting.</param>
+    /// <returns>The number of entities that match the criteria, or 0 if none match.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if connection or spec is null.</exception>
+    public static long Count<TEntity>(
+        this IDbConnection connection,
+        IRepoDbSpecification<TEntity> spec)
+        where TEntity : class
+    {
+        if (connection == null)
+        {
+            throw new ArgumentNullException(nameof(connection));
+        }
+
+        if (spec == null)
+        {
+            throw new ArgumentNullException(nameof(spec));
+        }
+
+        return connection.Count<TEntity>(where: spec.Criteria);
+    }
+
+    /// <summary>
+    /// Determines whether any entity in the database matches the criteria defined in the specification.
+    /// </summary>
+    /// <remarks>
+    /// This method is optimized for checking existence by limiting the query to retrieve only 1 result.
+    /// Sorting, field selection, and paging information from the specification are ignored for the existence check.
+    /// The connection is not closed by this method.
+    /// </remarks>
+    /// <typeparam name="TEntity">The type of the entity to check. Must be a reference type.</typeparam>
+    /// <param name="connection">The database connection to use for executing the check. Must be open and valid.</param>
+    /// <param name="spec">The specification that defines the filtering criteria for the existence check.</param>
+    /// <returns>True if at least one entity matches the criteria; otherwise, false.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if connection or spec is null.</exception>
+    public static bool Exists<TEntity>(
+        this IDbConnection connection,
+        IRepoDbSpecification<TEntity> spec)
+        where TEntity : class
+    {
+        if (connection == null)
+        {
+            throw new ArgumentNullException(nameof(connection));
+        }
+
+        if (spec == null)
+        {
+            throw new ArgumentNullException(nameof(spec));
+        }
+
+        return connection.Query<TEntity>(
+            where: spec.Criteria,
+            top: 1).Any();
     }
 }

@@ -1,4 +1,3 @@
-
 # RepoDb.Specifications
 
 A lightweight and expressive implementation of the **Specification Pattern for RepoDB**, designed to encapsulate query logic in a reusable, composable, and testable way.
@@ -200,6 +199,74 @@ var spec = new InvoiceListSpec();
 
 IEnumerable<InvoiceListItemDto> result =
     connection.QueryProjected<InvoiceListItemDto>(spec);
+```
+
+---
+
+## Example 7: Composing Specifications with AND
+
+```csharp
+// Create individual specifications
+var activeSpec = new ActiveInvoicesSpec();
+var recentSpec = new RecentInvoicesSpec(fromDate: DateTime.Now.AddMonths(-1));
+
+// Combine them using AND logic
+var combinedSpec = activeSpec.And(recentSpec);
+
+// Use the combined specification
+var invoices = connection.Query(combinedSpec);
+```
+
+**How AND works:**
+- Criteria from both specifications are merged into a single QueryGroup
+- RepoDB interprets multiple QueryFields in one QueryGroup as AND logic (default)
+- Result: `(IsActive = true) AND (IssueDate >= lastMonth)`
+- Sorts from the left specification are preferred; if none, right sorts are used
+- SelectFields, Skip, and Take follow the same left-preference rule
+
+---
+
+## Example 8: Chained Composition
+
+```csharp
+// Chain multiple AND compositions
+var spec = new ActiveInvoicesSpec()
+    .And(new RecentInvoicesSpec(DateTime.Now.AddMonths(-1)))
+    .And(new HighValueSpec(minAmount: 5000M));
+
+var invoices = connection.Query(spec);
+```
+
+---
+
+## Advanced: Building Custom OR Specifications
+
+If you need true OR logic, build a custom specification with database-native expressions:
+
+```csharp
+// For OR semantics, use database expressions directly
+public sealed class HighValueOrVipSpec : RepoDbSpecification<Invoice>
+{
+    public HighValueOrVipSpec()
+    {
+        Where(new QueryGroup(new[]
+        {
+            new QueryField("(Total > 5000 OR CustomerName = 'VIP')")
+        }));
+    }
+}
+
+var results = connection.Query(new HighValueOrVipSpec());
+```
+
+Alternatively, use `Connection.Query()` directly for complex OR scenarios:
+
+```csharp
+// Direct query without the specification pattern
+var results = connection.Query<Invoice>(
+    where: /* your OR criteria */,
+    orderBy: /* sorting */
+);
 ```
 
 ---
