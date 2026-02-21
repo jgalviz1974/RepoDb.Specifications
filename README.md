@@ -1,4 +1,9 @@
 # RepoDb.Specifications
+[![NuGet](https://img.shields.io/nuget/v/jgalviz.RepoDb.Specifications)](https://www.nuget.org/packages/jgalviz.RepoDb.Specifications)
+[![GitHub License](https://img.shields.io/github/license/jgalviz1974/RepoDb.Specifications)](LICENSE)
+[![Downloads](https://img.shields.io/nuget/dt/jgalviz.RepoDb.Specifications.svg)](https://www.nuget.org/packages/jgalviz.RepoDb.Specifications)
+[![Build Status](https://github.com/jgalviz1974/jgalviz.RepoDb.Specifications/workflows/Build/badge.svg)](https://github.com/jgalviz1974/RepoDb.Specifications/actions)
+[![License](https://img.shields.io/github/license/jgalviz1974/RepoDb.Specifications.svg)](LICENSE)
 
 A lightweight and expressive implementation of the **Specification Pattern for RepoDB**, designed to encapsulate query logic in a reusable, composable, and testable way.
 
